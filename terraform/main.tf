@@ -22,7 +22,7 @@ terraform {
 module "get_lambda" {
   source         = "./lambda"
   zip_location   = "../get/bootstrap.zip"
-  name           = "getLolCounter-${terraform.workspace}"
+  name           = "get-lol-counter-${terraform.workspace}"
   handler        = "bootstrap"
   run_time       = "provided.al2"
   timeout        = 300

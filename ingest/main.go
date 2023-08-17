@@ -21,7 +21,7 @@ func init() {
 }
 
 func main() {
-	batchSize := 8
+	batchSize := 16
 	totalURLs := len(champions.Champions)
 	var wg sync.WaitGroup
 	result := make(chan *source.ProcessedCounters, batchSize)
