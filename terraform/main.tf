@@ -19,7 +19,7 @@ terraform {
 # Lambdas
 # ---------------------------------------------------------------------------------------------------------------------
 
-module "get" {
+module "get_lambda" {
   source         = "./lambda"
   zip_location   = "../get/bootstrap.zip"
   name           = "getLolCounter-${terraform.workspace}"
@@ -30,6 +30,17 @@ module "get" {
   env_vars = {
     "COUNTER_TABLE_NAME" = "${aws_dynamodb_table.lol_counters.name}"
   } 
+}
+
+# ---------------------------------------------------------------------------------------------------------------------
+# API gateway
+# ---------------------------------------------------------------------------------------------------------------------
+
+module "counter_gateway" {
+  source         = "./api-gateway"
+  lambda_name =  "${module.get_lambda.name}"
+  lambda_invoke_arn =   "${module.get_lambda.invoke_arn}"
+  api_name = "lol-counter-${terraform.workspace}"
 }
 
 
