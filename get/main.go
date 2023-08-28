@@ -37,7 +37,7 @@ func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 	}
 
 	if len(counter.Counters) == 0 {
-		message := "Champion: " + champion + "not found"
+		message := "Champion: " + champion + " not found"
 		fmt.Println(message)
 		return events.APIGatewayProxyResponse{
 			StatusCode: 404,
