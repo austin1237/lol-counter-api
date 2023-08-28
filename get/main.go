@@ -29,7 +29,8 @@ func main() {
 }
 
 func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
-	counter, err := dynamo.GetCounter(tableName, "ziggs")
+	champion := request.QueryStringParameters["champion"]
+	counter, err := dynamo.GetCounter(tableName, champion)
 	if err != nil {
 		fmt.Println("Error retrieving item:", err)
 		return events.APIGatewayProxyResponse{StatusCode: 500}, err
