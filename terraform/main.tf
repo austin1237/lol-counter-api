@@ -32,7 +32,7 @@ module "get_lambda" {
   } 
 }
 
-module "get_lambda" {
+module "ingest_lambda" {
   source         = "./lambda"
   zip_location   = "../ingest/bootstrap.zip"
   name           = "ingest-lol-counter-${terraform.workspace}"
