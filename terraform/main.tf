@@ -32,6 +32,19 @@ module "get_lambda" {
   } 
 }
 
+module "get_lambda" {
+  source         = "./lambda"
+  zip_location   = "../ingest/bootstrap.zip"
+  name           = "ingest-lol-counter-${terraform.workspace}"
+  handler        = "bootstrap"
+  run_time       = "provided.al2"
+  timeout        = 300
+  dynamo_arn     = aws_dynamodb_table.lol_counters.arn
+  env_vars = {
+    "COUNTER_TABLE_NAME" = "${aws_dynamodb_table.lol_counters.name}"
+  } 
+}
+
 # ---------------------------------------------------------------------------------------------------------------------
 # API gateway
 # ---------------------------------------------------------------------------------------------------------------------

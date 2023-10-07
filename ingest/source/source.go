@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"net/url"
 	"sync"
 )
 
@@ -26,10 +27,10 @@ func combineData(rawData ChampionData) []string {
 	return combined
 }
 
-func FetchSource(url string, champion string, wg *sync.WaitGroup, result chan<- *ProcessedCounters) {
+func FetchSource(counterUrl string, champion string, wg *sync.WaitGroup, result chan<- *ProcessedCounters) {
 	defer wg.Done()
 
-	resp, err := http.Get(url + champion)
+	resp, err := http.Get(counterUrl + url.QueryEscape(champion))
 	if err != nil {
 		fmt.Println("Error fetching champion:", champion, "-", err)
 		result <- nil
@@ -49,6 +50,5 @@ func FetchSource(url string, champion string, wg *sync.WaitGroup, result chan<- 
 	processed.Champion = champion
 	processed.Counters = combineData(data)
 
-	fmt.Println("Fetched URL:", champion)
 	result <- &processed
 }

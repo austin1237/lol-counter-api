@@ -10,7 +10,7 @@ import (
 )
 
 // SaveProcessedCounters saves the ProcessedCounters data to DynamoDB
-func SaveProcessedCounters(data *source.ProcessedCounters) error {
+func SaveProcessedCounters(tableName string, data *source.ProcessedCounters) error {
 	// Create a new DynamoDB session
 	sess, err := session.NewSession(&aws.Config{
 		Region: aws.String("us-east-1"),

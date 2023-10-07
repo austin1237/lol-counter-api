@@ -32,6 +32,7 @@ resource "aws_iam_policy" "lambda_dynamodb_policy" {
           "dynamodb:GetItem",
           "dynamodb:Query",
           "dynamodb:Scan",
+          "dynamodb:PutItem"
         ],
         Resource = [
           "${var.dynamo_arn}",
