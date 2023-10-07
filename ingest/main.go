@@ -17,9 +17,9 @@ var tableName string
 
 func init() {
 	// Initialization function runs before main()
-	sourceApiUrl = os.Getenv("SOURCE_API_URL")
+	sourceApiUrl = os.Getenv("COUNTER_SOURCE_API_URL")
 	if sourceApiUrl == "" {
-		panic("Environment variable sourceApiUrl is not set or empty.")
+		panic("Environment variable COUNTER_SOURCE_API_URL is not set or empty.")
 	}
 	tableName = os.Getenv("COUNTER_TABLE_NAME")
 	if tableName == "" {
