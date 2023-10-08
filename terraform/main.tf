@@ -47,6 +47,19 @@ module "ingest_lambda" {
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
+# Cloudwatch that will trigger the ingest lambda
+# ---------------------------------------------------------------------------------------------------------------------
+module "ingest_lambda_trigger" {
+  source               = "./cloudwatch-lambda-trigger"
+  # Every 3 days at 1pm MDT
+  start_time           = "cron(0 19 */3 * ? *)"
+  name                 = "ingest-lol-counter-trigger-${terraform.workspace}"
+  lambda_function_name = "${module.ingest_lambda.name}"
+  description          = "The timed trigger for ${module.ingest_lambda.name}"
+  lambda_arn           = "${module.ingest_lambda.arn}"
+}
+
+# ---------------------------------------------------------------------------------------------------------------------
 # API gateway
 # ---------------------------------------------------------------------------------------------------------------------
 
@@ -56,7 +69,6 @@ module "counter_gateway" {
   lambda_invoke_arn =   "${module.get_lambda.invoke_arn}"
   api_name = "lol-counter-${terraform.workspace}"
 }
-
 
 # ---------------------------------------------------------------------------------------------------------------------
 #  DynamoDb
