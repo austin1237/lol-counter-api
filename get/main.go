@@ -3,12 +3,12 @@ package main
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"get/dynamo"
 	"os"
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
+	"github.com/rs/zerolog/log"
 )
 
 var tableName string
@@ -32,13 +32,13 @@ func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 	champion := request.QueryStringParameters["champion"]
 	counter, err := dynamo.GetCounter(tableName, champion)
 	if err != nil {
-		fmt.Println("Error retrieving item:", err)
+		log.Error().Err(err).Msg("Error retrieving from dynamo item: " + champion)
 		return events.APIGatewayProxyResponse{StatusCode: 500}, err
 	}
 
 	if len(counter.Counters) == 0 {
 		message := "Champion: " + champion + " not found"
-		fmt.Println(message)
+		log.Info().Msg(message)
 		return events.APIGatewayProxyResponse{
 			StatusCode: 404,
 			Body:       message,
@@ -53,15 +53,16 @@ func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 }
 
 func offlineHandler() {
-	counter, err := dynamo.GetCounter(tableName, "ziggs")
+	champion := "ziggs"
+	counter, err := dynamo.GetCounter(tableName, champion)
 	if err != nil {
-		fmt.Println("Error retrieving item:", err)
+		log.Error().Err(err).Msg("Error retrieving from dynamo item: " + champion)
 		os.Exit(1)
 	}
 
 	if len(counter.Counters) == 0 {
-		fmt.Println("Item not found.")
+		log.Info().Msg("Champion: " + champion + " not found")
 	} else {
-		fmt.Println("Retrieved Item:", counter)
+		log.Info().Msgf("Retrieved Item:  %s", counter)
 	}
 }

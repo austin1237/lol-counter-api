@@ -2,10 +2,11 @@ package source
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"net/url"
 	"sync"
+
+	"github.com/rs/zerolog/log"
 )
 
 type ChampionData struct {
@@ -32,7 +33,7 @@ func FetchSource(counterUrl string, champion string, wg *sync.WaitGroup, result 
 
 	resp, err := http.Get(counterUrl + url.QueryEscape(champion))
 	if err != nil {
-		fmt.Println("Error fetching champion:", champion, "-", err)
+		log.Error().Err(err).Msg("Error fetching champion: " + champion)
 		result <- nil
 		return
 	}
@@ -41,7 +42,7 @@ func FetchSource(counterUrl string, champion string, wg *sync.WaitGroup, result 
 	var data ChampionData
 	err = json.NewDecoder(resp.Body).Decode(&data)
 	if err != nil {
-		fmt.Println("Error decoding JSON from URL:", champion, "-", err)
+		log.Error().Err(err).Msg("Error decoding JSON from URL: " + champion)
 		result <- nil
 		return
 	}

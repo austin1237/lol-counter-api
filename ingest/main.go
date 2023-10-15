@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"ingest/champions"
 	"ingest/dynamo"
 	"ingest/source"
@@ -10,6 +9,7 @@ import (
 	"sync"
 
 	"github.com/aws/aws-lambda-go/lambda"
+	"github.com/rs/zerolog/log"
 )
 
 var sourceApiUrl string
@@ -28,7 +28,7 @@ func init() {
 }
 
 func refresh() {
-	batchSize := 30
+	batchSize := 1
 	totalURLs := len(champions.Champions)
 	var wg sync.WaitGroup
 	result := make(chan *source.ProcessedCounters, batchSize)
@@ -54,9 +54,9 @@ func refresh() {
 			if data != nil {
 				err := dynamo.SaveProcessedCounters(tableName, data)
 				if err != nil {
-					fmt.Println("failed to save", err)
+					log.Error().Err(err).Msg("failed to save " + data.Champion)
 				}
-				fmt.Printf("Saved Champion: %s", data.Champion)
+				log.Info().Msgf("Saved Champion: %s", data.Champion)
 			}
 		}
 	}
