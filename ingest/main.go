@@ -6,6 +6,7 @@ import (
 	"ingest/dynamo"
 	"ingest/source"
 	"os"
+	"strconv"
 	"sync"
 
 	"github.com/aws/aws-lambda-go/lambda"
@@ -14,6 +15,7 @@ import (
 
 var sourceApiUrl string
 var tableName string
+var batchSize int
 
 func init() {
 	// Initialization function runs before main()
@@ -25,10 +27,25 @@ func init() {
 	if tableName == "" {
 		panic("Environment variable COUNTER_TABLE_NAME is not set or empty.")
 	}
+	// Check if BATCH_SIZE is set
+	batchSizeEnv := os.Getenv("BATCH_SIZE")
+	if batchSizeEnv != "" {
+		// Attempt to convert the environment variable to an int
+		if val, err := strconv.Atoi(batchSizeEnv); err == nil {
+			// Successfully converted to an int
+			batchSize = val
+		} else {
+			// Handle the error (e.g., log it, set a different default, etc.)
+			log.Error().Err(err).Msg("Error converting BATCH_SIZE to an integer")
+			batchSize = 1
+		}
+	} else {
+		// BATCH_SIZE is not set, so use the default value of 1
+		batchSize = 1
+	}
 }
 
 func refresh() {
-	batchSize := 1
 	totalURLs := len(champions.Champions)
 	var wg sync.WaitGroup
 	result := make(chan *source.ProcessedCounters, batchSize)

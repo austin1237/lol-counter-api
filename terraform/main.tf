@@ -43,6 +43,7 @@ module "ingest_lambda" {
   env_vars = {
     "COUNTER_TABLE_NAME" = "${aws_dynamodb_table.lol_counters.name}"
     "COUNTER_SOURCE_API_URL" = "${var.COUNTER_SOURCE_API_URL}"
+    "BATCH_SIZE" = 30
   } 
 }
 
