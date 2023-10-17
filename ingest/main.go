@@ -49,6 +49,8 @@ func refresh() {
 	totalURLs := len(champions.Champions)
 	var wg sync.WaitGroup
 	result := make(chan *source.ProcessedCounters, batchSize)
+	sucesses := 0
+	failures := 0
 
 	for i := 0; i < totalURLs; i += batchSize {
 		end := i + batchSize
@@ -72,10 +74,13 @@ func refresh() {
 				err := dynamo.SaveProcessedCounters(tableName, data)
 				if err != nil {
 					log.Error().Err(err).Msg("failed to save " + data.Champion)
+					failures++
 				}
-				log.Info().Msgf("Saved Champion: %s", data.Champion)
+
+				sucesses++
 			}
 		}
+		log.Info().Msgf("succeses: %d  failures: %d", sucesses, failures)
 	}
 	close(result)
 }
