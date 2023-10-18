@@ -76,8 +76,9 @@ func refresh() {
 					log.Error().Err(err).Msg("failed to save " + data.Champion)
 					failures++
 				}
-
 				sucesses++
+			} else {
+				failures++
 			}
 		}
 		log.Info().Msgf("succeses: %d  failures: %d", sucesses, failures)
