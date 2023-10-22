@@ -66,7 +66,19 @@ func validateRawData(data ChampionData) error {
 func FetchSource(counterUrl string, champion string, wg *sync.WaitGroup, result chan<- *ProcessedCounters) {
 	defer wg.Done()
 
-	resp, err := http.Get(counterUrl + url.QueryEscape(champion))
+	urlChampion := champion
+
+	// The source site deviates for the following two champs in its url structure
+
+	if urlChampion == "nunu & willump" {
+		urlChampion = "nunu"
+	}
+
+	if urlChampion == "renata glasc" {
+		urlChampion = "renata"
+	}
+
+	resp, err := http.Get(counterUrl + url.QueryEscape(urlChampion))
 	if err != nil {
 		log.Error().Err(err).Msg("Error fetching champion: " + champion)
 		result <- nil
