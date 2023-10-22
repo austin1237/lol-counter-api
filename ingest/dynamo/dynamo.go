@@ -2,6 +2,8 @@ package dynamo
 
 import (
 	"ingest/source"
+	"strconv"
+	"time"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
@@ -29,9 +31,14 @@ func SaveProcessedCounters(tableName string, data *source.ProcessedCounters) err
 		return err
 	}
 
+	// Add the current time
+	av["lastUpdated"] = &dynamodb.AttributeValue{
+		N: aws.String(strconv.FormatInt(time.Now().Unix(), 10)),
+	}
+
 	// Create the input parameters for the PutItem operation
 	input := &dynamodb.PutItemInput{
-		TableName: aws.String("lol-counters-default"),
+		TableName: aws.String(tableName),
 		Item:      av,
 	}
 

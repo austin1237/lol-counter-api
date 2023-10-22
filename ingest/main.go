@@ -45,8 +45,8 @@ func init() {
 	}
 }
 
-func refresh() {
-	totalURLs := len(champions.Champions)
+func refresh(champions []string) {
+	totalURLs := len(champions)
 	var wg sync.WaitGroup
 	result := make(chan *source.ProcessedCounters, batchSize)
 	sucesses := 0
@@ -61,7 +61,7 @@ func refresh() {
 		// Launch goroutines to fetch sources concurrently.
 		for j := i; j < end; j++ {
 			wg.Add(1)
-			go source.FetchSource(sourceApiUrl, champions.Champions[j], &wg, result)
+			go source.FetchSource(sourceApiUrl, champions[j], &wg, result)
 		}
 
 		// Wait for all goroutines in this batch to finish.
@@ -95,10 +95,11 @@ func main() {
 }
 
 func handler(ctx context.Context) error {
-	refresh()
+	refresh(champions.Champions)
 	return nil
 }
 
 func offlineHandler() {
-	refresh()
+	test := []string{"ziggs"}
+	refresh(test)
 }
