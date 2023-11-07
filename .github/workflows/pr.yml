@@ -15,14 +15,14 @@ jobs:
       with:
         go-version: '1.20'
 
-    - name: Lint/Staticcheck
+    - name: Lint/Staticcheck get
       uses: dominikh/staticcheck-action@v1.3.0
       with:
         version: "2023.1"
         install-go: false
-        working-directory: ingest
+        working-directory: get
     
-    - name: Lint/Staticcheck
+    - name: Lint/Staticcheck ingest
       uses: dominikh/staticcheck-action@v1.3.0
       with:
         version: "2023.1"

@@ -63,6 +63,6 @@ func offlineHandler() {
 	if len(counter.Counters) == 0 {
 		log.Info().Msg("Champion: " + champion + " not found")
 	} else {
-		log.Info().Msgf("Retrieved Item:  %s", counter)
+		log.Info().Msgf("Retrieved Item:  %v", counter)
 	}
 }
