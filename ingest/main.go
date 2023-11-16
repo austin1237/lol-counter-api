@@ -10,12 +10,16 @@ import (
 	"sync"
 
 	"github.com/aws/aws-lambda-go/lambda"
+	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/session"
+	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/rs/zerolog/log"
 )
 
 var sourceApiUrl string
 var tableName string
 var batchSize int
+var dbInterface *dynamodb.DynamoDB
 
 func init() {
 	// Initialization function runs before main()
@@ -43,10 +47,22 @@ func init() {
 		// BATCH_SIZE is not set, so use the default value of 1
 		batchSize = 1
 	}
+
+	sess, err := session.NewSession(&aws.Config{
+		Region: aws.String("us-east-1"),
+	})
+
+	if err != nil {
+		log.Error().Err(err).Msg("Error setting up dynamo")
+	}
+
+	// Create a new DynamoDB client
+	dbInterface = dynamodb.New(sess)
 }
 
 func refresh(champions []string) {
 	totalURLs := len(champions)
+
 	var wg sync.WaitGroup
 	result := make(chan *source.ProcessedCounters, batchSize)
 	sucesses := 0
@@ -71,7 +87,7 @@ func refresh(champions []string) {
 		for j := i; j < end; j++ {
 			data := <-result
 			if data != nil {
-				err := dynamo.SaveProcessedCounters(tableName, data)
+				err := dynamo.SaveProcessedCounters(dbInterface, tableName, data)
 				if err != nil {
 					log.Error().Err(err).Msg("failed to save " + data.Champion)
 					failures++

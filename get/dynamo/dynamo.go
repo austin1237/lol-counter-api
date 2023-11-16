@@ -4,7 +4,6 @@ import (
 	"strconv"
 
 	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 )
 
@@ -14,17 +13,12 @@ type ProcessedCounters struct {
 	LastUpdated int64    `json:"lastUpdated"`
 }
 
-func GetCounter(tablename string, champion string) (ProcessedCounters, error) {
-	sess, err := session.NewSession(&aws.Config{
-		Region: aws.String("us-east-1"),
-	})
+// DynamoDBAPI is an interface that includes the GetItem method from *dynamodb.DynamoDB
+type DynamoDBAPI interface {
+	GetItem(input *dynamodb.GetItemInput) (*dynamodb.GetItemOutput, error)
+}
 
-	if err != nil {
-		return ProcessedCounters{}, err
-	}
-
-	// Create a new DynamoDB client
-	svc := dynamodb.New(sess)
+func GetCounter(db DynamoDBAPI, tablename string, champion string) (ProcessedCounters, error) {
 
 	input := &dynamodb.GetItemInput{
 		TableName: aws.String(tablename),
@@ -36,7 +30,7 @@ func GetCounter(tablename string, champion string) (ProcessedCounters, error) {
 	}
 
 	// Get the item from DynamoDB
-	result, err := svc.GetItem(input)
+	result, err := db.GetItem(input)
 
 	if err != nil {
 		return ProcessedCounters{}, err

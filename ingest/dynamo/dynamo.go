@@ -6,24 +6,17 @@ import (
 	"time"
 
 	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbattribute"
 )
 
-// SaveProcessedCounters saves the ProcessedCounters data to DynamoDB
-func SaveProcessedCounters(tableName string, data *source.ProcessedCounters) error {
-	// Create a new DynamoDB session
-	sess, err := session.NewSession(&aws.Config{
-		Region: aws.String("us-east-1"),
-		// Endpoint: aws.String("http://localhost:8000"),
-	})
-	if err != nil {
-		return err
-	}
+type DynamoDBAPI interface {
+	PutItem(input *dynamodb.PutItemInput) (*dynamodb.PutItemOutput, error)
+}
 
-	// Create a new DynamoDB client
-	svc := dynamodb.New(sess)
+// SaveProcessedCounters saves the ProcessedCounters data to DynamoDB
+func SaveProcessedCounters(db DynamoDBAPI, tableName string, data *source.ProcessedCounters) error {
+	// Create a new DynamoDB session
 
 	// Convert the ProcessedCounters struct to a DynamoDB attribute value map
 	av, err := dynamodbattribute.MarshalMap(data)
@@ -43,7 +36,7 @@ func SaveProcessedCounters(tableName string, data *source.ProcessedCounters) err
 	}
 
 	// Save the data to DynamoDB
-	_, err = svc.PutItem(input)
+	_, err = db.PutItem(input)
 	if err != nil {
 		return err
 	}
