@@ -166,4 +166,5 @@ var Champions = []string{
 	"milio",
 	"naafiri",
 	"briar",
+	"hwei",
 }
