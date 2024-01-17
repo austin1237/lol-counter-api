@@ -37,7 +37,7 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: 'us-east-1'
           TF_VAR_COUNTER_SOURCE_API_URL: ${{ secrets.COUNTER_SOURCE_API_URL }}
-          TF_VAR_INGEST_CRON: "cron(0 19 */3 * ? *)" # every 3 days at 7pm UTC
+          TF_VAR_INGEST_CRON: "cron(0 13 1 * ? *)" # once a month at 1pm UTC
           
 
       - run: cd terraform && terraform plan
@@ -46,7 +46,7 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: 'us-east-1'
           TF_VAR_COUNTER_SOURCE_API_URL: ${{ secrets.COUNTER_SOURCE_API_URL }}
-          TF_VAR_INGEST_CRON: "cron(0 19 */3 * ? *)" # every 3 days at 7pm UTC
+          TF_VAR_INGEST_CRON: "cron(0 13 1 * ? *)" # once a month at 1pm UTC
         
       - run: cd terraform && terraform apply -input=false -auto-approve
         env:
@@ -54,7 +54,7 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: 'us-east-1'
           TF_VAR_COUNTER_SOURCE_API_URL: ${{ secrets.COUNTER_SOURCE_API_URL }}
-          TF_VAR_INGEST_CRON: "cron(0 19 */3 * ? *)" # every 3 days at 7pm UTC
+          TF_VAR_INGEST_CRON: "cron(0 13 1 * ? *)" # once a month at 1pm UTC
   
 
 
