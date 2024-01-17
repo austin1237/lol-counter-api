@@ -53,7 +53,7 @@ module "ingest_lambda" {
 module "ingest_lambda_trigger" {
   source               = "./cloudwatch-lambda-trigger"
   # Every 3 days at 1pm MDT
-  start_time           = "cron(0 19 */3 * ? *)"
+  start_time           = "${var.INGEST_CRON}"
   name                 = "ingest-lol-counter-trigger-${terraform.workspace}"
   lambda_function_name = "${module.ingest_lambda.name}"
   description          = "The timed trigger for ${module.ingest_lambda.name}"
